@@ -1,0 +1,12 @@
+[requires]
+cpp-httplib/0.10.3
+
+[options]
+cpp-httplib/*:with_openssl=True
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
