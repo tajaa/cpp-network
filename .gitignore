@@ -142,3 +142,15 @@ cenv/
 cenv/*
 cenv/bin/
 cenv/bin/*
+
+
+# SSL Certificates and Keys
+*.crt
+*.key
+*.pem
+*.cer
+*.der
+*.pfx
+*.p12
+
+
