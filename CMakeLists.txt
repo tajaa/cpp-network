@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
-# Set the toolchain file path before the project command
-set(CMAKE_TOOLCHAIN_FILE ${CMAKE_BINARY_DIR}/Debug/generators/conan_toolchain.cmake)
+# Set the toolchain file path as a cache variable
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_BINARY_DIR}/Debug/generators/conan_toolchain.cmake CACHE PATH "Path to the Conan generated toolchain file")
 
 project(WebsiteProject)
 
@@ -37,3 +37,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 
 # Release configuration
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+
+# Copy config file to the build directory
+configure_file(${CMAKE_SOURCE_DIR}/config.jsonc ${CMAKE_BINARY_DIR}/config.jsonc COPYONLY)
+
+# Copy SSL certificate and key to the build directory
+configure_file(${CMAKE_SOURCE_DIR}/localhost.crt ${CMAKE_BINARY_DIR}/localhost.crt COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/localhost.key ${CMAKE_BINARY_DIR}/localhost.key COPYONLY)

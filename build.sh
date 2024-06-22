@@ -7,7 +7,7 @@ clean_build() {
     mkdir -p build
     cd build
     conan install .. --build=missing -s build_type=Debug
-    cmake .. -DCMAKE_BUILD_TYPE=Debug
+    cmake .. -DCMAKE_TOOLCHAIN_FILE=./Debug/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug
     cmake --build . --config Debug
     cd ..
 }
@@ -27,12 +27,17 @@ else
     fi
 fi
 
+# Copy config and SSL files to build directory
+cp config.jsonc build/
+cp localhost.crt build/
+cp localhost.key build/
+
 # Find and run the executable
 EXECUTABLE=$(find build -name WebServer -type f)
-
 if [ -n "$EXECUTABLE" ]; then
     echo "Running $EXECUTABLE"
-    $EXECUTABLE
+    cd build  # Change to build directory before running
+    ./WebServer
 else
     echo "Error: WebServer executable not found"
 fi
