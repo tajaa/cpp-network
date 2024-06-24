@@ -50,6 +50,12 @@ else
     echo "Warning: SSL certificate files not found. HTTPS might not work."
 fi
 
+#verify the SSL files
+echo "Checking SSL files..."
+ls -l localhost.crt localhost.key 
+echo "Contents of build/Debug directory"
+ls -l build/Debug 
+
 # Find and run the executable
 EXECUTABLE=$(find build -name WebServer -type f -perm +111)
 if [ -n "$EXECUTABLE" ]; then
