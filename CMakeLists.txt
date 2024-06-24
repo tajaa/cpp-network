@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.15)
 # Set the toolchain file path as a cache variable
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_BINARY_DIR}/Debug/generators/conan_toolchain.cmake CACHE PATH "Path to the Conan generated toolchain file")
 
+# Include the Conan-generated toolchain file
+include(${CMAKE_TOOLCHAIN_FILE})
+
 project(WebsiteProject)
 
 set(CMAKE_CXX_STANDARD 17)

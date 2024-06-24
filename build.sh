@@ -6,9 +6,18 @@ clean_build() {
     rm -rf build
     mkdir -p build
     cd build
-    conan install .. --build=missing -s build_type=Debug
-    cmake .. -DCMAKE_TOOLCHAIN_FILE=./Debug/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug
-    cmake --build . --config Debug
+    if ! conan install .. --build=missing -s build_type=Debug -pr:b=default -pr:h=default; then
+        echo "Conan install failed"
+        exit 1
+    fi
+    if ! cmake .. -DCMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug; then
+        echo "CMake configuration failed"
+        exit 1
+    fi
+    if ! cmake --build . --config Debug; then
+        echo "CMake build failed"
+        exit 1
+    fi
     cd ..
 }
 
@@ -22,21 +31,30 @@ else
     else
         # Build the project
         cd build
-        cmake --build . --config Debug
+        if ! cmake --build . --config Debug; then
+            echo "CMake build failed"
+            exit 1
+        fi
         cd ..
     fi
 fi
 
-# Copy config and SSL files to build directory
-cp config.jsonc build/
-cp localhost.crt build/
-cp localhost.key build/
+# Copy config file to build directory
+cp config.jsonc build/Debug/
+
+# Check if SSL files exist and copy them
+if [ -f "localhost.crt" ] && [ -f "localhost.key" ]; then
+    cp localhost.crt build/Debug/
+    cp localhost.key build/Debug/
+else
+    echo "Warning: SSL certificate files not found. HTTPS might not work."
+fi
 
 # Find and run the executable
-EXECUTABLE=$(find build -name WebServer -type f)
+EXECUTABLE=$(find build -name WebServer -type f -perm +111)
 if [ -n "$EXECUTABLE" ]; then
     echo "Running $EXECUTABLE"
-    cd build  # Change to build directory before running
+    cd $(dirname "$EXECUTABLE")  # Change to the directory containing the executable
     ./WebServer
 else
     echo "Error: WebServer executable not found"
