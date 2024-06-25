@@ -57,6 +57,9 @@ int main() {
       res.set_content("Hello, World!", "text/plain");
     });
 
+    //stop server 
+   
+
     // Listen to port
     std::cout << "Starting server on " << conf["server_ip"].asString() << ":"
               << conf["server_port"].asInt() << std::endl;
