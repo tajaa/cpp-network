@@ -1,0 +1,5 @@
+CompileFlags:
+  Add: [
+    "-I${workspaceFolder}/build/_deps/cpp-httplib-src",
+    "-I${workspaceFolder}/build/_deps/jsoncpp-src/include"
+  ]

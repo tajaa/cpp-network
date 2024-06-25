@@ -54,11 +54,14 @@ int main() {
 
     // Set up a route
     svr.Get("/", [](const httplib::Request &, httplib::Response &res) {
-      res.set_content("Hello, World!", "text/plain");
+      res.set_content("ITS ON!", "text/plain");
     });
 
-    //stop server 
-   
+    // stop server
+    svr.Get("/stop", [&](const httplib::Request &req, httplib::Response &res) {
+      svr.stop();
+      res.set_redirect("/");
+    });
 
     // Listen to port
     std::cout << "Starting server on " << conf["server_ip"].asString() << ":"

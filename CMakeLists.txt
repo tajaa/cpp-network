@@ -24,6 +24,7 @@ add_executable(WebServer ${SOURCES})
 # Include directories
 target_include_directories(WebServer PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
+
 # Link libraries
 target_link_libraries(WebServer PRIVATE 
     httplib::httplib 
