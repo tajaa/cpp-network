@@ -52,9 +52,10 @@ int main() {
                                "certificate and key files.");
     }
 
-    // Set up a route
-    svr.Get("/", [](const httplib::Request &, httplib::Response &res) {
-      res.set_content("ITS ON!", "text/plain");
+    // Set up a route for index page
+    svr.Get("/", [&](const httplib::Request &, httplib::Response &res) {
+      res.set_content("<html><body><h1>YO IM ON!</h1></body></html>",
+                      "text/html");
     });
 
     // stop server
