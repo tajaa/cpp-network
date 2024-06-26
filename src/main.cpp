@@ -1,5 +1,5 @@
+#include <filesystem>
 #include <fstream>
-
 #include <httplib.h>
 #include <iostream>
 #include <json/json.h>
@@ -33,11 +33,58 @@ void LoadJSON(const char *filename, Json::Value &value) {
 std::string ReadFile(const std::string &path) {
   std::ifstream file(path);
   if (!file.is_open()) {
-    return "error unable to open file: " + path;
+    return "error: unable to open file: " + path;
   }
   return std::string((std::istreambuf_iterator<char>(file)),
                      std::istreambuf_iterator<char>());
 }
+
+const char *GetContentType(const std::string &path) {
+  std::string ext = std::filesystem::path(path).extension().string();
+  if (ext == ".html")
+    return "text/html";
+  if (ext == ".css")
+    return "text/css";
+  if (ext == ".js")
+    return "application/javascript";
+  if (ext == ".jpg" || ext == ".jpeg")
+    return "image/jpeg";
+  if (ext == ".png")
+    return "image/png";
+  if (ext == ".gif")
+    return "image/gif";
+  return "application/octet-stream";
+}
+
+void ServeFile(const httplib::Request &req, httplib::Response &res) {
+  std::string filepath = "../public" + req.path;
+
+  // Check if the path ends with '/'
+  if (filepath.back() == '/') {
+    filepath += "index.html";
+  }
+  // If file doesn't exist, try appending .html
+  else if (!std::filesystem::exists(filepath) ||
+           std::filesystem::is_directory(filepath)) {
+    filepath += ".html";
+  }
+
+  if (std::filesystem::exists(filepath) &&
+      !std::filesystem::is_directory(filepath)) {
+    std::string content = ReadFile(filepath);
+    if (content.substr(0, 6) != "error:") {
+      res.set_content(content.c_str(), content.length(),
+                      GetContentType(filepath));
+    } else {
+      res.status = 404;
+      res.set_content("404 Not Found", 13, "text/plain");
+    }
+  } else {
+    res.status = 404;
+    res.set_content("404 Not Found", 13, "text/plain");
+  }
+}
+
 int main() {
   try {
     // Load the config file
@@ -62,24 +109,8 @@ int main() {
                                "certificate and key files.");
     }
 
-    { /*
-   svr.Get("/", [&](const httplib::Request &, httplib::Response &res) {
-       res.set_content("<html><body><h1>YO IM ON!</h1></body></html>",
-                       "text/html");
-     });
-
-     */
-    }
-
-    svr.Get("/", [&](const httplib::Request &, httplib::Response &res) {
-      std::string content = ReadFile("../public/index.html");
-      if (content.substr(0, 6) == "error:") {
-        res.status = 404;
-        res.set_content(content, "text/plain");
-      } else {
-        res.set_content(content, "text/html");
-      }
-    });
+    // catch all route
+    svr.Get(".*", ServeFile);
 
     // stop server
     svr.Get("/stop", [&](const httplib::Request &req, httplib::Response &res) {
