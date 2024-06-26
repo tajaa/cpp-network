@@ -1,0 +1,6 @@
+
+--root=src
+--filter=-build/include
+--linelength=120
+--headers=*.h,*.hpp
+--repository=/path/to/httplib

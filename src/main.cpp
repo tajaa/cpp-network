@@ -28,6 +28,16 @@ void LoadJSON(const char *filename, Json::Value &value) {
     throw std::runtime_error("Failed to parse json: " + errs);
   }
 }
+
+// logic for getting files from other paths
+std::string ReadFile(const std::string &path) {
+  std::ifstream file(path);
+  if (!file.is_open()) {
+    return "error unable to open file: " + path;
+  }
+  return std::string((std::istreambuf_iterator<char>(file)),
+                     std::istreambuf_iterator<char>());
+}
 int main() {
   try {
     // Load the config file
@@ -52,10 +62,23 @@ int main() {
                                "certificate and key files.");
     }
 
-    // Set up a route for index page
+    { /*
+   svr.Get("/", [&](const httplib::Request &, httplib::Response &res) {
+       res.set_content("<html><body><h1>YO IM ON!</h1></body></html>",
+                       "text/html");
+     });
+
+     */
+    }
+
     svr.Get("/", [&](const httplib::Request &, httplib::Response &res) {
-      res.set_content("<html><body><h1>YO IM ON!</h1></body></html>",
-                      "text/html");
+      std::string content = ReadFile("../public/index.html");
+      if (content.substr(0, 6) == "error:") {
+        res.status = 404;
+        res.set_content(content, "text/plain");
+      } else {
+        res.set_content(content, "text/html");
+      }
     });
 
     // stop server
