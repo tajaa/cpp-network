@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <fstream>
 #include <httplib.h>
+#include <inja/inja.hpp>
 #include <iostream>
 #include <json/json.h>
 #include <stdexcept>

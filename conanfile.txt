@@ -1,6 +1,8 @@
 [requires]
 cpp-httplib/0.10.3
 jsoncpp/1.9.5
+inja/3.3.0
+nlohmann_json/3.11.3
 
 [options]
 cpp-httplib/*:with_openssl=True

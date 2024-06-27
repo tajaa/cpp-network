@@ -14,6 +14,8 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(httplib CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(jsoncpp CONFIG REQUIRED)
+find_package(inja REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 # Automatically add all .cpp files in the src directory
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -31,6 +33,8 @@ target_link_libraries(WebServer PRIVATE
     OpenSSL::SSL 
     OpenSSL::Crypto
     JsonCpp::JsonCpp
+    pantor::inja
+    nlohmann_json::nlohmann_json 
 )
 
 # Copy HTML files to the build directory

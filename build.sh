@@ -10,6 +10,15 @@ clean_build() {
         echo "Conan install failed"
         exit 1
     fi
+    
+    # Print Conan info
+    echo "Conan installation completed. Printing info:"
+    conan info ..
+    
+    # Find inja.hpp
+    echo "Searching for inja.hpp:"
+    find . -name "inja.hpp"
+    
     if ! cmake .. -DCMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug; then
         echo "CMake configuration failed"
         exit 1
